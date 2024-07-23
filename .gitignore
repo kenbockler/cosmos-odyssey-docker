@@ -1,0 +1,5 @@
+postgres-data/
+
+### VS Code ###
+.vscode/
+.env

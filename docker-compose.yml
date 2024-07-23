@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: ken
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: odyssey
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432" # Muudetud pordid
+    restart: always
+    networks:
+      - cosmos-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cosmosuser -d cosmosodyssey"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U cosmosuser -d cosmosodyssey"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+
+  # backend:
+  #   image: openjdk:21-jdk-slim
+  #   container_name: backend-container
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cosmosodyssey
+  #     SPRING_DATASOURCE_USERNAME: cosmosuser
+  #     SPRING_DATASOURCE_PASSWORD: cosmospass
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - .:/usr/src/app
+  #   working_dir: /usr/src/app
+  #   command: ["./gradlew", "bootRun"]
+  #   networks:
+  #     - cosmos_network
+  #   restart: always
+
+  volumes:
+  postgres-data:
+
+networks:
+  cosmos-network:
