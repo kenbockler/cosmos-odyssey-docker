@@ -1,8 +1,10 @@
+# docker-compose up --build
+
 version: '3.9'
 
 services:
   postgres:
-    image: postgres:16
+    image: postgres
     container_name: postgres-container
     environment:
       POSTGRES_USER: ken
@@ -10,7 +12,7 @@ services:
       POSTGRES_DB: odyssey
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5433:5432" #Panin pordiks midagi ebatavalisemat
+      - "5432:5432"
     restart: always
     networks:
       - cosmos-network
@@ -22,27 +24,34 @@ services:
       timeout: 5s
       retries: 5
 
+  core:
+    image: estken/cosmos-odyssey-core:latest
+    container_name: cosmos-odyssey-core
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 9090
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ken
+      DB_PASSWORD: pass
+      DB_NAME: odyssey
+    ports:
+      - "9090:9090"
+    restart: always
+    networks:
+      - cosmos-network
+
+  frontend:
+    image: estken/cosmos-odyssey-frontend:latest
+    container_name: cosmos-odyssey-frontend
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - cosmos-network
+      
 volumes:
   postgres-data:
 
 networks:
   cosmos-network:
-
-  # backend:
-  #   image: openjdk:21-jdk-slim
-  #   container_name: backend-container
-  #   depends_on:
-  #     - postgres
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cosmosodyssey
-  #     SPRING_DATASOURCE_USERNAME: cosmosuser
-  #     SPRING_DATASOURCE_PASSWORD: cosmospass
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - .:/usr/src/app
-  #   working_dir: /usr/src/app
-  #   command: ["./gradlew", "bootRun"]
-  #   networks:
-  #     - cosmos_network
-  #   restart: always
