@@ -44,6 +44,8 @@ services:
   frontend:
     image: estken/cosmos-odyssey-frontend:latest
     container_name: cosmos-odyssey-frontend
+    environment:
+      VITE_API_URL: http://localhost:9090
     ports:
       - "80:80"
     restart: always
